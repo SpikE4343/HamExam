@@ -43,13 +43,27 @@ function createRandomTest( questionPool ){
      {
        var s = ele.sections[section];
        var qnames = Object.keys(s.questions);
-       var qname = parseInt(qnames.length * Math.random());
-       var pick = qnames[qname];
-       test.questions.push( pick );
+       var nameIndex = parseInt(qnames.length * Math.random());
+       var pick = qnames[nameIndex];
+
+       var question = s.questions[pick];
+       var q = {
+         answer: '',
+         choices: []
+       };
+
+       // randomize the choices
+       for( var c in question.choices )
+          q.choices.push ( [c, question.choices[c]]);
+
+       q.answer = '';
+       shuffle(q.choices);
+
+       console.log(q);
+       test.questions.push( q );
      }
    }
 
-  shuffle(test.questions);
   console.log(test.questions.length);
   return test;
 };

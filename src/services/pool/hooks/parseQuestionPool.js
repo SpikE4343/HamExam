@@ -41,7 +41,7 @@ module.exports = function(options)
         {
           hook.data.pool = parser.test.subElements;
 
-          fs.writeFile('pools.create.json', JSON.stringify(hook.data, null, 2));
+          //fs.writeFile('pools.create.json', JSON.stringify(hook.data, null, 2));
           resolve(hook);
         }));
     });
