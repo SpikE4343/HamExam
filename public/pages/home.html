@@ -12,7 +12,7 @@
         </md-button>
       </div>
       <div class="md-toolbar-tools" layout="row" flex ng-show="c.isNavDrawerOpen()">
-        <md-button class="md-icon-button"
+        <!-- <md-button class="md-icon-button"
                    aria-label="Open"
                    ng-click="c.open()">
           <md-tooltip>Open</md-tooltip>
@@ -24,16 +24,16 @@
                    ng-show="c.isLockedOpen()">
           <md-tooltip>Save</md-tooltip>
           <md-icon>save</md-icon>
-        </md-button>
+        </md-button> -->
       </div>
     </md-toolbar>
 
     <md-list>
-        <md-progress-circular
-          ng-show="c.radios == null && d.error != null"
+        <!-- <md-progress-circular
+          ng-show="c.loading"
           md-mode="indeterminate">
-        </md-progress-circular>
-        <md-list-item
+        </md-progress-circular> -->
+        <!-- <md-list-item
           layout="row"
           ui-sref="radios.list"
           ng-click="c.closeNavDrawer()">
@@ -48,7 +48,7 @@
                       ng-click="c.closeNavDrawer()">
             <md-icon >memory</md-icon>
             <p class="md-body-2">{{radio.file}}</p>
-        </md-list-item>
+        </md-list-item> -->
     </md-list>
   </md-sidenav>
 
@@ -60,7 +60,7 @@
             <md-tooltip>Menu</md-tooltip>
             <md-icon>settings_input_antenna</md-icon>
           </md-button>
-          <md-button class="md-icon-button"
+          <!-- <md-button class="md-icon-button"
                      aria-label="Open"
                      ng-click="c.open()">
             <md-tooltip>Open</md-tooltip>
@@ -71,11 +71,10 @@
                      ng-click="c.save()">
             <md-tooltip>Save</md-tooltip>
             <md-icon>save</md-icon>
-          </md-button>
+          </md-button> -->
         </div>
         <span flex></span>
-        <h2><span>Tugne</span></h2>
-        <h1><span ng-cloak> > {{c.navs().join(' > ')}}</span></h1>
+        <h2><span>HamExam</span></h2>
         <span flex></span>
         <!-- <md-button class="md-icon-button" aria-label="Settings">
           <md-icon>search</md-icon>
@@ -85,7 +84,35 @@
         </md-button> -->
       </div>
     </md-toolbar>
-    <md-content flex layout-fill ui-view class="main-content">
+    <md-content flex layout-fill class="main-content">
+      <md-card ng-repeat="exam in c.techExams.data">
+        <md-card-header>
+          <md-card-avatar>
+            <md-icon class="md-avatar-icon">memory</md-icon>
+          </md-card-avatar>
+          <md-card-header-text>
+            <span class="md-title">{{exam.name}}</span>
+            <span class="md-subhead">{{exam.created}}</span>
+          </md-card-header-text>
+        </md-card-header>
+        <md-card-title>
+          <md-card-title-text>
+            <span class="md-headline">{{exam._id}}</span>
+          </md-card-title-text>
+        </md-card-title>
+        <md-card-actions layout="row" layout-align="end center">
+          <md-button class="md-icon-button" aria-label="Edit">
+            <md-tooltip>Edit</md-tooltip>
+            <!-- ui-sref="radios.detail({ id: $index })" -->
+            <md-icon  >create</md-icon>
+          </md-button>
+          <md-button class="md-icon-button" aria-label="Delete">
+            <md-tooltip>Delete</md-tooltip>
+            <md-icon >delete</md-icon>
+          </md-button>
+
+        </md-card-actions>
+      </md-card>
     </md-content>
   </div>
 </div>
