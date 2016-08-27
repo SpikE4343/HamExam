@@ -5,7 +5,9 @@
   "homepage": "",
   "main": "src/",
   "keywords": [
-    "feathers"
+    "feathers",
+    "ham",
+    "radio"
   ],
   "license": "MIT",
   "repository": {},
@@ -13,7 +15,7 @@
   "contributors": [],
   "bugs": {},
   "engines": {
-    "node": ">= 0.12.0"
+    "node": ">= 6.4.0"
   },
   "scripts": {
     "test": "npm run jshint && npm run mocha",
@@ -46,6 +48,7 @@
     "winston": "^2.2.0"
   },
   "devDependencies": {
+    "gulp": "^3.9.1",
     "jshint": "^2.9.3",
     "mocha": "^3.0.2",
     "request": "^2.74.0"

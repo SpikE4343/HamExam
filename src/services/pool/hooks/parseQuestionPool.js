@@ -3,7 +3,6 @@
 var fs = require('fs');
 var http = require('http');
 var es = require('event-stream');
-//var Promise = require('promise');
 var Readable = require('stream').Readable;
 var QuestionPoolParser = require('./QuestionPoolParser');
 
@@ -20,30 +19,24 @@ module.exports = function(options)
 
   return function(hook)
   {
-    //hook.parseQuestionPool = true;
     var parser = new QuestionPoolParser(hook.params.id);
     var text = new Buffer(decodeURIComponent( hook.data.pool), 'base64').toString('ascii');
-
-    //fs.writeFile('hook2.txt', text);
-    //fs.writeFile('hook.txt', JSON.stringify(hook, null, 2));
 
     var rs = new Readable;
     rs.push(text);
     rs.push(null);
-    return new Promise( function( resolve, reject)
-    {
+
+    let p = new Promise( function( resolve, reject) {
       rs.pipe(es.split())
-        .pipe(es.mapSync(function(line)
-        {
+        .pipe(es.mapSync(line => {
           parser.parseLine(line);
         })
-        .on('end', function()
-        {
+        .on('end', function() {
           hook.data.pool = parser.test.subElements;
-
-          //fs.writeFile('pools.create.json', JSON.stringify(hook.data, null, 2));
           resolve(hook);
         }));
     });
+
+    return p;
   };
 };
