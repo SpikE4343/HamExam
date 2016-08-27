@@ -31,6 +31,7 @@ angular
       return self.socket != null;
     };
 
-    self.connect('http://localhost:3030');
+		//if( process.env.NODE_ENV==='production')
+    self.connect('http://hamexam.herokuapp.com');
 	}
 ]);
