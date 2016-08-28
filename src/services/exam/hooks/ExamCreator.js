@@ -5,6 +5,7 @@
 // Use this hook to manipulate incoming or outgoing data.
 // For more information on hooks see: http://docs.feathersjs.com/hooks/readme.html
 
+
 const defaults = {};
 
 function shuffle(array) {
@@ -27,72 +28,73 @@ function shuffle(array) {
     return array;
 }
 
-function createRandomTest( questionPool ){
-   var test = {
-     pool: questionPool._id,
-     name: questionPool.name,
-     user: 0,
-     questions: []
-   };
+// TODO: seed random number generator
+//
+function createRandomTest( test, questionPool ){
+   test.pool = questionPool;
+   test.questions = [];
 
-   for( var sub in questionPool.pool )
+   for( var e =0; e <  questionPool.subElements.length; ++e )
    {
-     console.log( sub );
-     var ele  = questionPool.pool[sub];
-     for( var section in ele.sections )
+     var ele = questionPool.subElements[e];
+     console.log( `subElement: ${ele.id}` );
+     for( var s =0; s < ele.sections.length; ++s )
      {
-       var s = ele.sections[section];
-       var qnames = Object.keys(s.questions);
-       var nameIndex = parseInt(qnames.length * Math.random());
-       var pick = qnames[nameIndex];
+       var section = ele.sections[s];
 
-       var question = s.questions[pick];
-       var q = {
-         answer: '',
-         choices: []
-       };
+       console.log( `subSection: ${section.id}` );
+       // pick a random question
+       var pick = parseInt(section.questions.length * Math.random());
+       var question = section.questions[pick];
+       var q = Object.assign( {}, question.toObject() );
+       console.log(q);
+
+       var answer = q.choices[q.answer];
+       q.answer = -1;
 
        // randomize the choices
-       for( var c in question.choices )
-          q.choices.push ( [c, question.choices[c]]);
-
-       q.answer = '';
        shuffle(q.choices);
 
-       console.log(q);
+       // reassign answer
+       for( var i = 0; i < q.choices.length; ++i){
+         if( answer === q.choices[i])
+          q.answer = i;
+       }
+
+       //console.log(q);
        test.questions.push( q );
      }
    }
 
   console.log(test.questions.length);
-  return test;
 };
 
 module.exports = function(options) {
   options = Object.assign({}, defaults, options);
 
   return function(hook) {
-    hook.data.randomTest = true;
-    var testpool = hook.app.service('/pools');
+    //hook.data.randomTest = true;
+    var testpool = hook.app.service('/questionpools');
     console.log('Creating random test for hook: ' + JSON.stringify(hook, null, 2));
 
     return new Promise( (resolve, reject) => {
       testpool
-        .find({ query: { tag: hook.data.pool} })
-        .then( res => {
+        .get(hook.data.pool)
+        .then( pool => {
           //console.log('Creating random test from: ' + JSON.stringify(res, null, 2));
 
-          if( res == null || res.total < 1){
+          if( pool == undefined){
             //throw new Error( "No test pools found for: "+hook.data.pool);
             hook.data = "No test pools found for: "+hook.data.pool;
             reject(hook);
             return;
           }
 
-          var test = createRandomTest( res.data[0] );
-          hook.data = test;
-          hook.data.created = new Date();
+          createRandomTest( hook.data, pool );
           resolve(hook);
+        }).catch(function(error) {
+          //throw new Error( error.stack );
+          console.error(error.stack);
         });
       });
   };

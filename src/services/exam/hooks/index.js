@@ -1,28 +1,23 @@
 'use strict';
 
-const randomExam = require('./randomExam');
-
 const globalHooks = require('../../../hooks');
 const hooks = require('feathers-hooks');
 const auth = require('feathers-authentication').hooks;
 
-function authUser(){
-  return [
-    auth.verifyToken(),
-    auth.populateUser(),
-    auth.restrictToAuthenticated()
-  ];
-}
-
+const ExamCreator = require('./ExamCreator');
 
 exports.before = {
-  all: [],
+  all: [
+    // auth.verifyToken(),
+    // auth.populateUser(),
+    // auth.restrictToAuthenticated()
+  ],
   find: [],
   get: [],
-  create: [ randomExam() ],
-  update: [authUser()],
-  patch: [authUser()],
-  remove: [authUser()]
+  create: [ExamCreator()],
+  update: [],
+  patch: [],
+  remove: []
 };
 
 exports.after = {

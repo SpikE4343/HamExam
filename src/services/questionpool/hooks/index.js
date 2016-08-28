@@ -1,10 +1,10 @@
 'use strict';
 
-const parseQuestionPool = require('./parseQuestionPool');
-
 const globalHooks = require('../../../hooks');
 const hooks = require('feathers-hooks');
 const auth = require('feathers-authentication').hooks;
+
+const parseQuestionPool = require('./parseQuestionPool');
 
 exports.before = {
   all: [
@@ -14,9 +14,7 @@ exports.before = {
   ],
   find: [],
   get: [],
-  create: [
-    parseQuestionPool()
-  ],
+  create: [ parseQuestionPool() ],
   update: [],
   patch: [],
   remove: []
