@@ -2,6 +2,9 @@
 // Load Test question pool
 //
 
+// TODO: heavy validation
+// TODO: skip duplicates
+//
 function QuestionPoolParser(url){
   var self = this;
   self.StateEnum = {
@@ -16,9 +19,8 @@ function QuestionPoolParser(url){
   self.state = self.StateEnum.READY;
   self.class = '';
   self.test = {
-    name: url,
     url: url,
-    subElements: {}
+    subElements: []
   };
 
   self.parsingSubElement = null;
@@ -27,7 +29,7 @@ function QuestionPoolParser(url){
 
   self.parseLine = function(line){
     //var line = lineInput.replace(/�/g, '-' );
-    //console.log('input: ' +lineInput);
+    //console.log(`line: ${line}`);
     //console.log('replaced: '+line);
     var startState = self.state;
     switch (self.state) {
@@ -36,20 +38,20 @@ function QuestionPoolParser(url){
       case self.StateEnum.SECTION:
         if( self.parseSubElement(line)){
           self.state = self.StateEnum.SUBELEMENT;
-          console.log(self.state);
+          //console.log(self.state);
           return;
         }
 
         if( self.parseQuestionHeader(line)) {
           self.state = self.StateEnum.QUESTION;
-          console.log(self.state);
+          // console.log(self.state);
           return;
         }
 
         // section
         if( self.parseSection(line) ){
           self.state = self.StateEnum.SECTION;
-          console.log(self.state);
+          // console.log(self.state);
           return;
         }
         break;
@@ -65,7 +67,7 @@ function QuestionPoolParser(url){
         break;
     }
 
-    console.log(self.state);
+    //console.log(`state = ${self.state}`);
   };
 
   self.subElementRegExp = /SUBELEMENT ([A-Z]\d+)\s(.*)/;
@@ -75,10 +77,11 @@ function QuestionPoolParser(url){
       return false;
 
     self.parsingSubElement = {
+      id: match[1],
       description: match[2],
-      sections: {}
+      sections: []
     };
-    self.test.subElements[match[1]] = self.parsingSubElement;
+    self.test.subElements.push(self.parsingSubElement);
     return true;
   };
 
@@ -90,11 +93,12 @@ function QuestionPoolParser(url){
 
     // start of a new section
     self.parsingSection = {
+      id: match[1],
       description: match[2],
-      questions: {}
+      questions: []
     };
 
-    self.parsingSubElement.sections[match[1]] = self.parsingSection;
+    self.parsingSubElement.sections.push(self.parsingSection);
 
     return true;
   };
@@ -106,13 +110,13 @@ function QuestionPoolParser(url){
       return false;
 
     self.parsingQuestion = {
+      id: match[1],
       question: '',
-      sourceSection: '',
-      answer: match[2],
-      choices: {}
+      answer: match[2].charCodeAt(0) - 'A'.charCodeAt(0),
+      choices: []
     };
 
-    self.parsingSection.questions[match[1]] = self.parsingQuestion;
+    self.parsingSection.questions.push(self.parsingQuestion);
     return true;
   };
 
@@ -126,7 +130,7 @@ function QuestionPoolParser(url){
   self.parseAnswer = function(line){
     var match = self.answerRegExp.exec( line );
     if( match != null ) {
-      self.parsingQuestion.choices[match[1]] = match[2];
+      self.parsingQuestion.choices.push(match[2]);
       return true;
     }
 
